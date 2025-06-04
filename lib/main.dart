@@ -180,12 +180,3 @@ class _SpeechScreenState extends State<SpeechScreen> {
     }
   }
 }
-
-
-/**
- * initial commit
- * 
- * - added a simple UI with speech to text functionality
- * - added a python backend with 'Rasa NLU' for intent classification and entity extraction
- * 
- */
