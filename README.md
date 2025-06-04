@@ -1,16 +1,5 @@
 # voice_reminder
 
-A new Flutter project.
+Voice Reminder is a Flutter application with a Voice User Interface (UI) that allows users to set reminders using voice commands.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+> **Note:** This project is currently under active development. Features and functionality may change as the application evolves.
