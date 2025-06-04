@@ -40,7 +40,7 @@ pip install rasa
 rasa train
 ```
 
-To test run Rasa in interactive mode:
+- [Optional] To test run Rasa in interactive mode:
 
 ```bash
 rasa shell
