@@ -1,6 +1,8 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 
 part 'nlu_event.dart';
 part 'nlu_state.dart';
@@ -31,24 +33,32 @@ class NLUBloc extends Bloc<NLUEvent, NLUState> {
 }
 
 Future<String> fetchAndPrintResponse(String text) async {
-  // http.Response response = await http.post(
-  //   Uri.parse(
-  //     'http://192.168.0.108:5005/model/parse',
-  //   ), // Replace with your API endpoint
-  //   headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
-  //   body: jsonEncode({
-  //     'text': text,
-  //     'locale': 'en_US',
-  //     'tz': 'Asia/Dhaka', // Optional: set your local time zone
-  //   }),
-  // );
-  // if (response.statusCode == 200) {
-  //   return response.body;
-  // } else {
-  //   throw Exception('Failed to fetch response: ${response.statusCode}');
-  // }
-  return await Future.delayed(
-    const Duration(milliseconds: 1000),
-    () => 'Dummy Response for "$text"',
-  );
+  try {
+    http.Response response = await http
+        .post(
+          Uri.parse(
+            'http://192.168.0.104:5005/model/parse',
+          ), // Replace with your API endpoint
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: jsonEncode({
+            'text': text,
+            'locale': 'en_US',
+            'tz': 'Asia/Dhaka', // Optional: set your local time zone
+          }),
+        )
+        .timeout(const Duration(seconds: 3));
+    if (response.statusCode == 200) {
+      debugPrint('Response: ${response.body}');
+      return response.body;
+    } else {
+      debugPrint('Error: ${response.statusCode} - ${response.body}');
+      throw Exception('Failed to fetch response: ${response.statusCode}');
+    }
+  } catch (e) {
+    debugPrint('Exception in fetchAndPrintResponse: $e');
+    throw Exception('Error fetching response: $e');
+  }
 }
