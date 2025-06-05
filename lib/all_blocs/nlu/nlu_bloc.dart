@@ -2,30 +2,30 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
-part 'rasa_event.dart';
-part 'rasa_state.dart';
+part 'nlu_event.dart';
+part 'nlu_state.dart';
 
-class RasaBloc extends Bloc<RasaEvent, RasaState> {
-  RasaBloc() : super(RasaInitial()) {
-    on<RasaEvent>((event, emit) async {
-      if (event is RasaSendMessageEvent) {
+class NLUBloc extends Bloc<NLUEvent, NLUState> {
+  NLUBloc() : super(NLUInitial()) {
+    on<NLUEvent>((event, emit) async {
+      if (event is NLUSendMessageEvent) {
         await _handleSendMessage(event, emit);
       }
     });
   }
 
   Future<void> _handleSendMessage(
-    RasaSendMessageEvent event,
-    Emitter<RasaState> emit,
+    NLUSendMessageEvent event,
+    Emitter<NLUState> emit,
   ) async {
-    emit(RasaLoading());
+    emit(NLULoading());
     try {
       // Here you would typically call your API and get the response
       String response = await fetchAndPrintResponse(event.message);
 
-      emit(RasaReceivedResponse(response));
+      emit(NLUReceivedResponse(response));
     } catch (error) {
-      emit(RasaError(error.toString()));
+      emit(NLUError(error.toString()));
     }
   }
 }
@@ -52,15 +52,3 @@ Future<String> fetchAndPrintResponse(String text) async {
     () => 'Dummy Response for "$text"',
   );
 }
-
-/**
- * Commit message: 
-Incorporated BLOC pattern for state management, separating business logic from UI.
- - Added RasaBloc to manage Rasa events and states
- - Created RasaEvent for sending messages
- - Created RasaState for different states like loading, received response, and error
- - Implemented fetchAndPrintResponse function to simulate API call
- - Updated main.dart to include RasaBloc in MultiBlocProvider
- - Updated SpeechScreen to use RasaBloc for handling speech input and displaying responses
- - Added error handling in RasaBloc
- */

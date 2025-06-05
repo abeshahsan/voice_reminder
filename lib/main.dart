@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:voice_reminder/all_blocs/bloc/rasa_bloc.dart';
+import 'package:voice_reminder/all_blocs/nlu/nlu_bloc.dart';
 import 'pages/speech.dart';
 
 void main() {
   runApp(
     MultiBlocProvider(
-      providers: [BlocProvider<RasaBloc>(create: (context) => RasaBloc())],
+      providers: [BlocProvider<NLUBloc>(create: (context) => NLUBloc())],
       child: const MyApp(),
     ),
   );

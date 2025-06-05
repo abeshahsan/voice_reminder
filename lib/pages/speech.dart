@@ -2,7 +2,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import 'package:voice_reminder/all_blocs/bloc/rasa_bloc.dart';
+import 'package:voice_reminder/all_blocs/nlu/nlu_bloc.dart';
 
 class SpeechScreen extends StatefulWidget {
   const SpeechScreen({super.key});
@@ -41,12 +41,12 @@ class SpeechScreenState extends State<SpeechScreen> {
           child: Icon(_isMicOn ? Icons.mic : Icons.mic_none),
         ),
       ),
-      body: BlocBuilder<RasaBloc, RasaState>(
+      body: BlocBuilder<NLUBloc, NLUState>(
         builder: (context, state) {
-          if (state is RasaLoading) {
+          if (state is NLULoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is RasaReceivedResponse) {
+          if (state is NLUReceivedResponse) {
             responseText = state.response;
           }
           return Column(
@@ -76,8 +76,8 @@ class SpeechScreenState extends State<SpeechScreen> {
                           _speech.stop();
                         });
                         final textToSend = _text;
-                        context.read<RasaBloc>().add(
-                          RasaSendMessageEvent(textToSend),
+                        context.read<NLUBloc>().add(
+                          NLUSendMessageEvent(textToSend),
                         );
                       },
                     ),
