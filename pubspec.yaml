@@ -38,6 +38,9 @@ dependencies:
   avatar_glow: ^3.0.1
   highlight_text: ^1.8.0
   http: ^1.4.0
+  bloc: ^9.0.0
+  meta: ^1.16.0
+  flutter_bloc: ^9.1.1
 
 dev_dependencies:
   flutter_test:
