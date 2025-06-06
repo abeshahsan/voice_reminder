@@ -9,12 +9,13 @@ part 'stt_state.dart';
 class STTBloc extends Bloc<STTEvent, STTState> {
   final stt.SpeechToText speech = stt.SpeechToText();
   bool available = false;
-  bool _isMicOn = false;
+  bool isMicOn = false;
+  String recognizedText = '';
 
   Future<void> initSTT() async {
     available = await speech.initialize(
       onStatus: (status) {
-        if ((status == 'done' || status == 'notListening') && _isMicOn) {
+        if ((status == 'done' || status == 'notListening') && isMicOn) {
           Future.delayed(const Duration(milliseconds: 500), () {
             add(STTListenEvent());
           });
@@ -24,6 +25,8 @@ class STTBloc extends Bloc<STTEvent, STTState> {
         debugPrint('Error: ${val.errorMsg}');
       },
     );
+
+    isMicOn = false;
 
     if (available) {
       debugPrint('Speech to Text initialized successfully');
@@ -35,20 +38,20 @@ class STTBloc extends Bloc<STTEvent, STTState> {
   STTBloc() : super(STTStateInitial()) {
     on<STTEvent>((event, emit) async {
       if (event is STTInitializeEvent) {
-        _isMicOn = false;
         await initSTT();
       } else if (event is STTListenEvent) {
-        _isMicOn = true;
+        isMicOn = true;
         emit(STTStateListening());
         _keepListening(emit);
       } else if (event is STTStopListeningEvent) {
-        _isMicOn = false;
+        isMicOn = false;
         await speech.stop();
         emit(STTStateInitial());
       } else if (event is STTTextChangedEvent) {
         debugPrint(
           'Text changed: ${event.text} with confidence ${event.confidence}',
         );
+        recognizedText += " ${event.text}";
         emit(STTtextChanged(event.text, event.confidence));
       }
     });
@@ -60,7 +63,7 @@ class STTBloc extends Bloc<STTEvent, STTState> {
       debugPrint('Speech to Text not available, cannot listen');
       return;
     }
-    _isMicOn = true;
+    isMicOn = true;
 
     speech.listen(
       onResult: (val) {

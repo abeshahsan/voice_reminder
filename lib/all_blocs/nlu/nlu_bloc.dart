@@ -37,7 +37,7 @@ Future<String> fetchAndPrintResponse(String text) async {
     http.Response response = await http
         .post(
           Uri.parse(
-            'http://192.168.0.104:5005/model/parse',
+            'http://192.168.0.106:5005/model/parse',
           ), // Replace with your API endpoint
           headers: {
             'Content-Type': 'application/json',

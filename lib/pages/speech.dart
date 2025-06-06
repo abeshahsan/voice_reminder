@@ -1,4 +1,3 @@
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/all_blocs/nlu/nlu_bloc.dart';
@@ -12,43 +11,28 @@ class SpeechScreen extends StatefulWidget {
 }
 
 class SpeechScreenState extends State<SpeechScreen> {
-  bool _isMicOn = false;
-  String _text = 'Press the button and start speaking';
-  double _confidence = 1.0;
-  String responseText = "";
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Confidence: ${(_confidence * 100.0).toStringAsFixed(1)}%'),
-      ),
+      appBar: AppBar(title: Text('Voice Reminder'), centerTitle: true),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: BlocBuilder<STTBloc, STTState>(
         builder: (context, state) {
-          if (state is STTStateListening) {
-            _isMicOn = true;
-          } else {
-            _isMicOn = false;
-          }
-          debugPrint('Mic is ${_isMicOn ? "ON" : "OFF"}');
-          return AvatarGlow(
-            animate: _isMicOn,
-            glowColor: Theme.of(context).primaryColor,
-            duration: const Duration(milliseconds: 1000),
-            repeat: true,
-            child: FloatingActionButton(
-              onPressed: () {
-                if (!_isMicOn) {
-                  _text = '';
-                  context.read<STTBloc>().add(STTListenEvent());
-                } else {
-                  _text = 'Press the button and start speaking';
-                  context.read<STTBloc>().add(STTStopListeningEvent());
-                }
-              },
-              child: Icon(_isMicOn ? Icons.mic : Icons.mic_none),
-            ),
+          bool isMicOn = context.read<STTBloc>().isMicOn;
+          debugPrint('Mic is ${isMicOn ? "ON" : "OFF"}');
+          return FloatingActionButton(
+            backgroundColor: isMicOn
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.6)
+                : Colors.red,
+            foregroundColor: Colors.white,
+            onPressed: () {
+              if (!isMicOn) {
+                context.read<STTBloc>().add(STTListenEvent());
+              } else {
+                context.read<STTBloc>().add(STTStopListeningEvent());
+              }
+            },
+            child: Icon(isMicOn ? Icons.mic : Icons.mic_off),
           );
         },
       ),
@@ -57,6 +41,7 @@ class SpeechScreenState extends State<SpeechScreen> {
           if (state is NLULoading) {
             return const Center(child: CircularProgressIndicator());
           }
+          String responseText = "";
           if (state is NLUReceivedResponse) {
             responseText = state.response;
           }
@@ -70,16 +55,46 @@ class SpeechScreenState extends State<SpeechScreen> {
                     Expanded(
                       child: BlocBuilder<STTBloc, STTState>(
                         builder: (context, state) {
-                          if (state is STTtextChanged) {
-                            _text = "$_text ${state.text}";
-                            _confidence = state.confidence;
-                          }
                           return TextField(
-                            controller: TextEditingController(text: _text),
+                            onChanged: (value) =>
+                                context.read<STTBloc>().recognizedText = value,
+
+                            controller: TextEditingController(
+                              text: context
+                                  .read<STTBloc>()
+                                  .recognizedText
+                                  .trim(),
+                            ),
                             maxLines: null,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Recognized Text',
+                            decoration: InputDecoration(
+                              hintText: 'Type or speak your message...',
+                              hintStyle: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 13.0,
+                              ),
+                              border: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                              ),
+                              enabledBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                                borderSide: BorderSide(
+                                  color: Colors.grey,
+                                  width: 1.0,
+                                ),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8.0),
+                                ),
+                                borderSide: BorderSide(
+                                  color: Colors.blue,
+                                  width: 2.0,
+                                ),
+                              ),
                             ),
                           );
                         },
@@ -90,12 +105,12 @@ class SpeechScreenState extends State<SpeechScreen> {
                       icon: const Icon(Icons.send),
                       color: Theme.of(context).primaryColor,
                       onPressed: () {
-                        if (!_isMicOn) {
-                          return;
-                        }
                         // Stop listening and send the text to NLU
                         context.read<STTBloc>().add(STTStopListeningEvent());
-                        final textToSend = _text;
+                        final textToSend = context
+                            .read<STTBloc>()
+                            .recognizedText
+                            .trim();
                         context.read<NLUBloc>().add(
                           NLUSendMessageEvent(textToSend),
                         );

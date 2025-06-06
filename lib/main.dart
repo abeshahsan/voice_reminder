@@ -22,10 +22,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Voice',
+      title: 'Voice Reminder',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.blue,
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: Colors.blueAccent,
+        ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: SpeechScreen(),
