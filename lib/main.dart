@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/nlu/nlu_bloc.dart';
 import 'package:voice_reminder/blocs/stt/stt_bloc.dart';
-import 'pages/speech.dart';
+import 'package:voice_reminder/blocs/task/task_bloc.dart';
+import 'pages/home.dart';
 
 void main() {
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider<TaskBloc>(create: (context) => TaskBloc()),
         BlocProvider<NLUBloc>(create: (context) => NLUBloc()),
         BlocProvider<STTBloc>(create: (context) => STTBloc()),
       ],
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SpeechScreen(),
+      home: Home(),
     );
   }
 }

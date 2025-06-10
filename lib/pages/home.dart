@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/nlu/nlu_bloc.dart';
 import 'package:voice_reminder/blocs/stt/stt_bloc.dart';
+import 'package:voice_reminder/components/todo_list.dart';
 
-class SpeechScreen extends StatefulWidget {
-  const SpeechScreen({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  SpeechScreenState createState() => SpeechScreenState();
+  HomeState createState() => HomeState();
 }
 
-class SpeechScreenState extends State<SpeechScreen> {
+class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,6 +49,7 @@ class SpeechScreenState extends State<SpeechScreen> {
           return Column(
             children: [
               Padding(
+                // start of TextField Part
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,18 +120,8 @@ class SpeechScreenState extends State<SpeechScreen> {
                     ),
                   ],
                 ),
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    responseText.isNotEmpty
-                        ? responseText
-                        : 'Response will appear here',
-                    style: const TextStyle(fontSize: 18.0),
-                  ),
-                ),
-              ),
+              ), // End of TextField Part
+              Expanded(child: TodoList()),
             ],
           );
         },
