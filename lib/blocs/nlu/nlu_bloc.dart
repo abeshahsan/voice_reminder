@@ -22,7 +22,6 @@ class NLUBloc extends Bloc<NLUEvent, NLUState> {
   ) async {
     emit(NLULoading());
     try {
-      // Here you would typically call your API and get the response
       String response = await fetchAndPrintResponse(event.message);
 
       emit(NLUReceivedResponse(response));
@@ -36,9 +35,7 @@ Future<String> fetchAndPrintResponse(String text) async {
   try {
     http.Response response = await http
         .post(
-          Uri.parse(
-            'http://192.168.0.106:5005/model/parse',
-          ), // Replace with your API endpoint
+          Uri.parse('http://192.168.0.113:5005/model/parse'),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -46,7 +43,7 @@ Future<String> fetchAndPrintResponse(String text) async {
           body: jsonEncode({
             'text': text,
             'locale': 'en_US',
-            'tz': 'Asia/Dhaka', // Optional: set your local time zone
+            'tz': 'Asia/Dhaka',
           }),
         )
         .timeout(const Duration(seconds: 3));
