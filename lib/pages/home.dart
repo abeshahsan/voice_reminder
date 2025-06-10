@@ -21,25 +21,40 @@ class HomeState extends State<Home> {
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: BlocBuilder<STTBloc, STTState>(
-        builder: (context, state) {
-          bool isMicOn = context.read<STTBloc>().isMicOn;
-          debugPrint('Mic is ${isMicOn ? "ON" : "OFF"}');
-          return FloatingActionButton(
-            backgroundColor: isMicOn
-                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.6)
-                : Colors.red,
-            foregroundColor: Colors.white,
+      floatingActionButton: Row(
+        // mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FloatingActionButton(
+            heroTag: 'addTask',
+            backgroundColor: Colors.blue,
+            child: Icon(Icons.add),
             onPressed: () {
-              if (!isMicOn) {
-                context.read<STTBloc>().add(STTListenEvent());
-              } else {
-                context.read<STTBloc>().add(STTStopListeningEvent());
-              }
+              // Show dialog or navigate to add task page
             },
-            child: Icon(isMicOn ? Icons.mic : Icons.mic_off),
-          );
-        },
+          ),
+          const SizedBox(height: 16),
+          BlocBuilder<STTBloc, STTState>(
+            builder: (context, state) {
+              bool isMicOn = context.read<STTBloc>().isMicOn;
+              return FloatingActionButton(
+                heroTag: 'mic',
+                backgroundColor: isMicOn
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.red,
+                foregroundColor: Colors.white,
+                onPressed: () {
+                  if (!isMicOn) {
+                    context.read<STTBloc>().add(STTListenEvent());
+                  } else {
+                    context.read<STTBloc>().add(STTStopListeningEvent());
+                  }
+                },
+                child: Icon(isMicOn ? Icons.mic : Icons.mic_off),
+              );
+            },
+          ),
+        ],
       ),
       body: BlocBuilder<NLUBloc, NLUState>(
         builder: (context, state) {
