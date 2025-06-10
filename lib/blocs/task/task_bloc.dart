@@ -37,8 +37,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<TaskEvent>((event, emit) {
       if (event is TaskLoadEvent) {
         _loadTasks(emit);
-        // } else if (event is TaskAddEvent) {
-        //   _addTask(event.task, emit);
+      } else if (event is TaskAddEvent) {
+        _addTask(event.task, emit);
         // } else if (event is TaskUpdateEvent) {
         //   _updateTask(event.task, emit);
         // } else if (event is TaskDeleteEvent) {
@@ -53,5 +53,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     _tasks = List.from(dummyTasks); // Simulating loading from a database or API
     emit(TaskLoaded(_tasks));
     debugPrint('Tasks loaded: ${_tasks.length}');
+  }
+
+  void _addTask(Task task, Emitter<TaskState> emit) {
+    debugPrint('Adding task: ${task.title}');
+    _tasks.add(task);
+    emit(TaskLoaded(_tasks));
+    debugPrint('Task added. Total tasks: ${_tasks.length}');
   }
 }

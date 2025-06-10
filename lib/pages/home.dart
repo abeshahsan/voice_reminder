@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/nlu/nlu_bloc.dart';
 import 'package:voice_reminder/blocs/stt/stt_bloc.dart';
+import 'package:voice_reminder/blocs/task/task_bloc.dart';
 import 'package:voice_reminder/components/todo_list.dart';
+import 'package:voice_reminder/components/add_task_dialog.dart';
+import 'package:voice_reminder/models/task_model.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -30,7 +35,32 @@ class HomeState extends State<Home> {
             backgroundColor: Colors.blue,
             child: Icon(Icons.add),
             onPressed: () {
-              // Show dialog or navigate to add task page
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AddTaskDialog(
+                    onSave: (data) {
+                      Map<String, dynamic> taskData = jsonDecode(data);
+                      final title = taskData['title'].trim();
+                      final description = taskData['description'].trim();
+                      final dueDate = DateTime.parse(taskData['dueDate']);
+                      if (title.isNotEmpty) {
+                        // Add task to the TaskBloc
+                        context.read<TaskBloc>().add(
+                          TaskAddEvent(
+                            Task(
+                              id: DateTime.now().toString(),
+                              title: title,
+                              description: description,
+                              dueDate: dueDate,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                  );
+                },
+              );
             },
           ),
           const SizedBox(height: 16),
