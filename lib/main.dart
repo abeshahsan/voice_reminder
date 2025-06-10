@@ -27,9 +27,10 @@ class MyApp extends StatelessWidget {
       title: 'Voice Reminder',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.orange,
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: Colors.blueAccent,
+          secondary: Colors.orangeAccent,
+          primary: Colors.orange,
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),

@@ -15,7 +15,11 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Voice Reminder'), centerTitle: true),
+      appBar: AppBar(
+        title: Text('Voice Reminder'),
+        centerTitle: true,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: BlocBuilder<STTBloc, STTState>(
         builder: (context, state) {
