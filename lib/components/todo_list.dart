@@ -6,12 +6,13 @@ class TodoList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 10, // Replace with your actual todo count
+      itemCount: 12, // Replace with your actual todo count
       itemBuilder: (context, index) {
         return ListTile(
           title: Text('Todo Item ${index + 1}'),
           trailing: IconButton(
-            icon: Icon(Icons.delete),
+            icon: Icon(Icons.delete, size: 20.0),
+            color: Colors.red,
             onPressed: () {
               // Handle delete action
             },
