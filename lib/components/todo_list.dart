@@ -23,9 +23,10 @@ class TodoList extends StatelessWidget {
 
         return ListView.builder(
           itemCount: tasks.length,
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(4.0),
           itemBuilder: (context, index) {
             return ListTile(
+              contentPadding: const EdgeInsets.only(left: 16.0, right: 0.0, top: 0.0, bottom: 0.0),
               title: Text(tasks[index].title),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
