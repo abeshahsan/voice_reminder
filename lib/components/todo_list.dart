@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/task/task_bloc.dart';
+import 'package:voice_reminder/components/edit_task_dialog.dart';
 import 'package:voice_reminder/models/task_model.dart';
 
 class TodoList extends StatelessWidget {
@@ -10,7 +11,6 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TaskBloc, TaskState>(
       builder: (context, state) {
-
         List<Task> tasks = context.read<TaskBloc>().allTasks;
         if (tasks.isEmpty) {
           return const Center(
@@ -20,7 +20,7 @@ class TodoList extends StatelessWidget {
             ),
           );
         }
-        
+
         return ListView.builder(
           itemCount: tasks.length,
           padding: const EdgeInsets.all(8.0),
@@ -39,6 +39,18 @@ class TodoList extends StatelessWidget {
               onTap: () {
                 // Handle task tap, e.g., navigate to task details
                 debugPrint('Tapped on task: ${tasks[index].title}');
+                // for now, open the edit dialog
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return EditTaskDialog(
+                      initialTitle: tasks[index].title,
+                      id: tasks[index].id,
+                      initialDescription: tasks[index].description,
+                      initialDueDate: tasks[index].dueDate,
+                    );
+                  },
+                );
               },
             );
           },

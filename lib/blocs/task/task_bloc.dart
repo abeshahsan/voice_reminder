@@ -39,8 +39,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         _loadTasks(emit);
       } else if (event is TaskAddEvent) {
         _addTask(event.task, emit);
-        // } else if (event is TaskUpdateEvent) {
-        //   _updateTask(event.task, emit);
+        } else if (event is TaskUpdateEvent) {
+          _updateTask(event.task, emit);
         // } else if (event is TaskDeleteEvent) {
         //   _deleteTask(event.taskId, emit);
       }
@@ -60,5 +60,17 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     _tasks.add(task);
     emit(TaskLoaded(_tasks));
     debugPrint('Task added. Total tasks: ${_tasks.length}');
+  }
+
+  void _updateTask(Task task, Emitter<TaskState> emit) {
+    debugPrint('Updating task: ${task.title}');
+    final index = _tasks.indexWhere((t) => t.id == task.id);
+    if (index != -1) {
+      _tasks[index] = task;
+      emit(TaskLoaded(_tasks));
+      debugPrint('Task updated. Total tasks: ${_tasks.length}');
+    } else {
+      debugPrint('Task not found for update: ${task.id}');
+    }
   }
 }

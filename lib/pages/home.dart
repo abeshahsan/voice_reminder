@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/nlu/nlu_bloc.dart';
@@ -38,27 +36,7 @@ class HomeState extends State<Home> {
               showDialog(
                 context: context,
                 builder: (context) {
-                  return AddTaskDialog(
-                    onSave: (data) {
-                      Map<String, dynamic> taskData = jsonDecode(data);
-                      final title = taskData['title'].trim();
-                      final description = taskData['description'].trim();
-                      final dueDate = DateTime.parse(taskData['dueDate']);
-                      if (title.isNotEmpty) {
-                        // Add task to the TaskBloc
-                        context.read<TaskBloc>().add(
-                          TaskAddEvent(
-                            Task(
-                              id: DateTime.now().toString(),
-                              title: title,
-                              description: description,
-                              dueDate: dueDate,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  );
+                  return AddTaskDialog();
                 },
               );
             },

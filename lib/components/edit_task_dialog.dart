@@ -3,25 +3,27 @@ import 'package:voice_reminder/blocs/task/task_bloc.dart';
 import 'package:voice_reminder/models/task_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddTaskDialog extends StatefulWidget {
+class EditTaskDialog extends StatefulWidget {
   final String? initialTitle;
   final String? initialDescription;
   final DateTime? initialDueDate;
   final String dialogTitle;
+  final String id;
 
-  const AddTaskDialog({
+  const EditTaskDialog({
     super.key,
+    required this.id,
     this.initialTitle,
     this.initialDescription,
     this.initialDueDate,
-    this.dialogTitle = 'Add Task',
+    this.dialogTitle = 'Edit Task',
   });
 
   @override
-  State<AddTaskDialog> createState() => _AddTaskDialogState();
+  State<EditTaskDialog> createState() => _EditTaskDialogState();
 }
 
-class _AddTaskDialogState extends State<AddTaskDialog> {
+class _EditTaskDialogState extends State<EditTaskDialog> {
   late TextEditingController _titleController;
   late TextEditingController _descriptionController;
   late DateTime? _dueDate;
@@ -56,9 +58,9 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     if (title.isNotEmpty) {
       // Add task to the TaskBloc
       context.read<TaskBloc>().add(
-        TaskAddEvent(
+        TaskUpdateEvent(
           Task(
-            id: DateTime.now().toString(),
+            id: widget.id,
             title: title,
             description: description,
             dueDate: dueDate,
