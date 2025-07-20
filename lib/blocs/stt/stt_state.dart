@@ -17,3 +17,9 @@ final class STTtextChanged extends STTStateListening {
 
   STTtextChanged(this.text, this.confidence);
 }
+
+final class STTAutoSendToNLU extends STTState {
+  final String message;
+
+  STTAutoSendToNLU(this.message);
+}

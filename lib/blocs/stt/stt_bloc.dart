@@ -11,18 +11,23 @@ class STTBloc extends Bloc<STTEvent, STTState> {
   bool available = false;
   bool isMicOn = false;
   String recognizedText = '';
+  String _lastEmittedText = ''; // Track last emitted text to prevent duplicates
 
   Future<void> initSTT() async {
     available = await speech.initialize(
       onStatus: (status) {
-        if ((status == 'done' || status == 'notListening') && isMicOn) {
-          Future.delayed(const Duration(milliseconds: 500), () {
-            add(STTListenEvent());
-          });
+        debugPrint('STT Status: $status');
+        if (status == 'done' || status == 'notListening') {
+          if (isMicOn) {
+            add(STTStopListeningEvent());
+          }
         }
       },
       onError: (val) {
-        debugPrint('Error: ${val.errorMsg}');
+        debugPrint('STT Error: ${val.errorMsg}');
+        if (isMicOn) {
+          add(STTStopListeningEvent());
+        }
       },
     );
 
@@ -40,43 +45,63 @@ class STTBloc extends Bloc<STTEvent, STTState> {
       if (event is STTInitializeEvent) {
         await initSTT();
       } else if (event is STTListenEvent) {
+        if (!available) {
+          debugPrint('Speech to Text not available, cannot listen');
+          return;
+        }
+
+        debugPrint('Starting to listen...');
         isMicOn = true;
+        recognizedText = ''; // Clear previous text
+        _lastEmittedText = ''; // Reset last emitted text
         emit(STTStateListening());
-        _keepListening(emit);
+
+        speech.listen(
+          onResult: (val) {
+            debugPrint(
+              'STT Result: ${val.recognizedWords} (confidence: ${val.confidence})',
+            );
+            if (val.recognizedWords.isNotEmpty &&
+                val.recognizedWords != _lastEmittedText) {
+              recognizedText = val.recognizedWords;
+              _lastEmittedText = val.recognizedWords;
+              add(STTTextChangedEvent(val.recognizedWords, val.confidence));
+            }
+          },
+          listenFor: const Duration(seconds: 10), // Increased to 10 seconds
+          pauseFor: const Duration(seconds: 3), // Increased pause time
+          listenOptions: stt.SpeechListenOptions(
+            partialResults: true,
+            cancelOnError: false, // Changed to false to be more resilient
+            listenMode: stt.ListenMode.dictation,
+          ),
+        );
       } else if (event is STTStopListeningEvent) {
+        debugPrint('Stopping listening...');
         isMicOn = false;
         await speech.stop();
+
+        // Auto-send to NLU if we have recognized text
+        if (recognizedText.trim().isNotEmpty) {
+          debugPrint('Auto-sending to NLU: $recognizedText');
+          emit(STTAutoSendToNLU(recognizedText.trim()));
+        } else {
+          debugPrint('No text recognized, returning to initial state');
+          emit(STTStateInitial());
+        }
+      } else if (event is STTSendNLUMessageEvent) {
+        // Reset to initial state after sending
+        debugPrint('Resetting STT state after NLU send');
         emit(STTStateInitial());
       } else if (event is STTTextChangedEvent) {
         debugPrint(
           'Text changed: ${event.text} with confidence ${event.confidence}',
         );
-        recognizedText += " ${event.text}";
+        recognizedText = event.text;
         emit(STTtextChanged(event.text, event.confidence));
       }
     });
 
     add(STTInitializeEvent());
-  }
-  void _keepListening(Emitter<STTState> emit) {
-    if (!available) {
-      debugPrint('Speech to Text not available, cannot listen');
-      return;
-    }
-    isMicOn = true;
-
-    speech.listen(
-      onResult: (val) {
-        if (val.hasConfidenceRating && val.confidence > 0) {
-          add(STTTextChangedEvent(val.recognizedWords, val.confidence));
-        }
-      },
-      listenFor: const Duration(seconds: 30),
-      listenOptions: stt.SpeechListenOptions(
-        partialResults: true,
-        cancelOnError: false,
-        listenMode: stt.ListenMode.dictation,
-      ),
-    );
   }
 }

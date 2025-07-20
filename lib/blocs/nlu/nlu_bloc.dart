@@ -33,9 +33,11 @@ class NLUBloc extends Bloc<NLUEvent, NLUState> {
 
 Future<String> fetchAndPrintResponse(String text) async {
   try {
+    debugPrint('URL: http://192.168.31.222:5005/model/parse');
+    
     http.Response response = await http
         .post(
-          Uri.parse('http://192.168.0.113:5005/model/parse'),
+          Uri.parse('http://192.168.31.222:5005/model/parse'),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -46,7 +48,10 @@ Future<String> fetchAndPrintResponse(String text) async {
             'tz': 'Asia/Dhaka',
           }),
         )
-        .timeout(const Duration(seconds: 3));
+        .timeout(const Duration(seconds: 10)); // Increased timeout to 10 seconds
+    
+    debugPrint('Response status code: ${response.statusCode}');
+    
     if (response.statusCode == 200) {
       debugPrint('Response: ${response.body}');
       return response.body;

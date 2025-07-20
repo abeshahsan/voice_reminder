@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/nlu/nlu_bloc.dart';
 import 'package:voice_reminder/blocs/stt/stt_bloc.dart';
 import 'package:voice_reminder/blocs/task/task_bloc.dart';
-import 'pages/home.dart';
+import 'pages/todolist.dart';
 
 void main() {
   runApp(
