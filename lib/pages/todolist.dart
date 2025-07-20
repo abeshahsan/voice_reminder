@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/nlu/nlu_bloc.dart';
-import 'package:voice_reminder/blocs/stt/stt_bloc.dart';
 import 'package:voice_reminder/components/todo_list.dart';
-import 'package:voice_reminder/components/add_task_dialog.dart';
 import 'package:voice_reminder/pages/chatbot.dart';
 
 class Home extends StatefulWidget {
