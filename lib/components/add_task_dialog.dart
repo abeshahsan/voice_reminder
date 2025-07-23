@@ -54,11 +54,13 @@ class _AddTaskDialogState extends State<AddTaskDialog> {
     final dueDate = _dueDate ?? DateTime.now();
 
     if (title.isNotEmpty) {
-      // Add task to the TaskBloc
+      // Add task to the TaskBloc with a unique ID
+      final uniqueId =
+          '${DateTime.now().millisecondsSinceEpoch}_${title.hashCode}';
       context.read<TaskBloc>().add(
         TaskAddEvent(
           Task(
-            id: DateTime.now().toString(),
+            id: uniqueId,
             title: title,
             description: description,
             dueDate: dueDate,

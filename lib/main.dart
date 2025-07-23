@@ -3,9 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/nlu/nlu_bloc.dart';
 import 'package:voice_reminder/blocs/stt/stt_bloc.dart';
 import 'package:voice_reminder/blocs/task/task_bloc.dart';
-import 'pages/todolist.dart';
+import 'package:voice_reminder/services/task_service.dart';
+import 'pages/split_screen_home.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize database
+  final taskService = TaskService();
+  await taskService.initializeDatabase();
+
   runApp(
     MultiBlocProvider(
       providers: [
@@ -34,7 +41,7 @@ class MyApp extends StatelessWidget {
         ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Home(),
+      home: SplitScreenHome(),
     );
   }
 }

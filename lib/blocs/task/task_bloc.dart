@@ -2,11 +2,12 @@ import 'package:bloc/bloc.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:voice_reminder/models/task_model.dart';
+import 'package:voice_reminder/database/database_helper.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';
 
-// some dummy data for testing
+// some dummy data for testing - will be used for initial population
 List<Task> dummyTasks = [
   Task(
     id: '1',
@@ -30,54 +31,94 @@ List<Task> dummyTasks = [
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   List<Task> _tasks = [];
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
 
   List<Task> get allTasks => _tasks;
 
   TaskBloc() : super(TaskInitial()) {
-    on<TaskEvent>((event, emit) {
+    on<TaskEvent>((event, emit) async {
       if (event is TaskLoadEvent) {
-        _loadTasks(emit);
+        await _loadTasks(emit);
       } else if (event is TaskAddEvent) {
-        _addTask(event.task, emit);
+        await _addTask(event.task, emit);
       } else if (event is TaskUpdateEvent) {
-        _updateTask(event.task, emit);
+        await _updateTask(event.task, emit);
       } else if (event is TaskDeleteEvent) {
-        _deleteTask(event.taskId, emit);
+        await _deleteTask(event.taskId, emit);
       }
     });
     add(TaskLoadEvent());
   }
 
-  void _loadTasks(Emitter<TaskState> emit) {
-    debugPrint('Loading tasks...');
-    _tasks = List.from(dummyTasks); // Simulating loading from a database or API
-    emit(TaskLoaded(_tasks));
-    debugPrint('Tasks loaded: ${_tasks.length}');
-  }
+  Future<void> _loadTasks(Emitter<TaskState> emit) async {
+    try {
+      debugPrint('Loading tasks from database...');
+      emit(TaskLoading());
 
-  void _addTask(Task task, Emitter<TaskState> emit) {
-    debugPrint('Adding task: ${task.title}');
-    _tasks.add(task);
-    emit(TaskLoaded(_tasks));
-    debugPrint('Task added. Total tasks: ${_tasks.length}');
-  }
+      _tasks = await _databaseHelper.getAllTasks();
 
-  void _updateTask(Task task, Emitter<TaskState> emit) {
-    debugPrint('Updating task: ${task.title}');
-    final index = _tasks.indexWhere((t) => t.id == task.id);
-    if (index != -1) {
-      _tasks[index] = task;
+      // If no tasks in database, populate with dummy data
+      if (_tasks.isEmpty) {
+        debugPrint('No tasks found in database, populating with dummy data...');
+        for (Task task in dummyTasks) {
+          await _databaseHelper.insertTask(task);
+        }
+        _tasks = await _databaseHelper.getAllTasks();
+      }
+
       emit(TaskLoaded(_tasks));
-      debugPrint('Task updated. Total tasks: ${_tasks.length}');
-    } else {
-      debugPrint('Task not found for update: ${task.id}');
+      debugPrint('Tasks loaded: ${_tasks.length}');
+    } catch (e) {
+      debugPrint('Error loading tasks: $e');
+      emit(TaskError('Failed to load tasks: $e'));
     }
   }
 
-  void _deleteTask(String id, Emitter<TaskState> emit) {
-    debugPrint('Deleting task with ID: $id');
-    _tasks.removeWhere((task) => task.id == id);
-    emit(TaskLoaded(_tasks));
-    debugPrint('Task deleted. Total tasks: ${_tasks.length}');
+  Future<void> _addTask(Task task, Emitter<TaskState> emit) async {
+    try {
+      debugPrint('Adding task to database: ${task.title}');
+      emit(TaskLoading());
+
+      await _databaseHelper.insertTask(task);
+      _tasks = await _databaseHelper.getAllTasks();
+
+      emit(TaskLoaded(_tasks));
+      debugPrint('Task added. Total tasks: ${_tasks.length}');
+    } catch (e) {
+      debugPrint('Error adding task: $e');
+      emit(TaskError('Failed to add task: $e'));
+    }
+  }
+
+  Future<void> _updateTask(Task task, Emitter<TaskState> emit) async {
+    try {
+      debugPrint('Updating task in database: ${task.title}');
+      emit(TaskLoading());
+
+      await _databaseHelper.updateTask(task);
+      _tasks = await _databaseHelper.getAllTasks();
+
+      emit(TaskLoaded(_tasks));
+      debugPrint('Task updated. Total tasks: ${_tasks.length}');
+    } catch (e) {
+      debugPrint('Error updating task: $e');
+      emit(TaskError('Failed to update task: $e'));
+    }
+  }
+
+  Future<void> _deleteTask(String id, Emitter<TaskState> emit) async {
+    try {
+      debugPrint('Deleting task from database with ID: $id');
+      emit(TaskLoading());
+
+      await _databaseHelper.deleteTask(id);
+      _tasks = await _databaseHelper.getAllTasks();
+
+      emit(TaskLoaded(_tasks));
+      debugPrint('Task deleted. Total tasks: ${_tasks.length}');
+    } catch (e) {
+      debugPrint('Error deleting task: $e');
+      emit(TaskError('Failed to delete task: $e'));
+    }
   }
 }
