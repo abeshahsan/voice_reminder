@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:voice_reminder/blocs/task/task_bloc.dart';
-import 'package:voice_reminder/components/edit_task_dialog.dart';
+import 'package:voice_reminder/pages/task_form_page.dart';
 import 'package:voice_reminder/models/task_model.dart';
 
 class TodoList extends StatelessWidget {
@@ -11,6 +11,37 @@ class TodoList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TaskBloc, TaskState>(
       builder: (context, state) {
+        if (state is TaskLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is TaskError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                Text(
+                  'Error loading tasks',
+                  style: TextStyle(fontSize: 18, color: Colors.red),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  state.message,
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<TaskBloc>().add(TaskLoadEvent());
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
         List<Task> tasks = context.read<TaskBloc>().allTasks;
         if (tasks.isEmpty) {
           return const Center(
@@ -26,7 +57,12 @@ class TodoList extends StatelessWidget {
           padding: const EdgeInsets.all(4.0),
           itemBuilder: (context, index) {
             return ListTile(
-              contentPadding: const EdgeInsets.only(left: 16.0, right: 0.0, top: 0.0, bottom: 0.0),
+              contentPadding: const EdgeInsets.only(
+                left: 16.0,
+                right: 0.0,
+                top: 0.0,
+                bottom: 0.0,
+              ),
               title: Text(tasks[index].title),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,36 +97,25 @@ class TodoList extends StatelessWidget {
                   );
                   if (!context.mounted) return;
                   if (value == 'edit') {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return EditTaskDialog(
-                          initialTitle: tasks[index].title,
-                          id: tasks[index].id,
-                          initialDescription: tasks[index].description,
-                          initialDueDate: tasks[index].dueDate,
-                        );
-                      },
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TaskFormPage(task: tasks[index]),
+                      ),
                     );
                   } else if (value == 'delete') {
-                    context.read<TaskBloc>().add(TaskDeleteEvent(tasks[index].id));
+                    context.read<TaskBloc>().add(
+                      TaskDeleteEvent(tasks[index].id),
+                    );
                   }
                 },
               ),
               onTap: () {
-                // Handle task tap, e.g., navigate to task details
+                // Handle task tap - navigate to edit task
                 debugPrint('Tapped on task: ${tasks[index].title}');
-                // for now, open the edit dialog
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return EditTaskDialog(
-                      initialTitle: tasks[index].title,
-                      id: tasks[index].id,
-                      initialDescription: tasks[index].description,
-                      initialDueDate: tasks[index].dueDate,
-                    );
-                  },
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TaskFormPage(task: tasks[index]),
+                  ),
                 );
               },
             );

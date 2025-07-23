@@ -23,21 +23,28 @@ class NLUBloc extends Bloc<NLUEvent, NLUState> {
     emit(NLULoading());
     try {
       String response = await fetchAndPrintResponse(event.message);
-
       emit(NLUReceivedResponse(response));
     } catch (error) {
-      emit(NLUError(error.toString()));
+      print('NLU Error: $error');
+      // Fallback: return the original message in a simple JSON format for local processing
+      final fallbackResponse = jsonEncode({
+        'text': event.message,
+        'intent': {'name': 'fallback'},
+        'entities': [],
+        'intent_ranking': [],
+      });
+      emit(NLUReceivedResponse(fallbackResponse));
     }
   }
 }
 
 Future<String> fetchAndPrintResponse(String text) async {
   try {
-    debugPrint('URL: http://192.168.31.222:5005/model/parse');
-    
+    final url = 'http://192.168.31.28:5005/model/parse';
+
     http.Response response = await http
         .post(
-          Uri.parse('http://192.168.31.222:5005/model/parse'),
+          Uri.parse(url),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -48,19 +55,15 @@ Future<String> fetchAndPrintResponse(String text) async {
             'tz': 'Asia/Dhaka',
           }),
         )
-        .timeout(const Duration(seconds: 10)); // Increased timeout to 10 seconds
-    
-    debugPrint('Response status code: ${response.statusCode}');
-    
+        .timeout(const Duration(seconds: 10));
+
     if (response.statusCode == 200) {
-      debugPrint('Response: ${response.body}');
       return response.body;
     } else {
-      debugPrint('Error: ${response.statusCode} - ${response.body}');
-      throw Exception('Failed to fetch response: ${response.statusCode}');
+      throw Exception('HTTP ${response.statusCode}: ${response.body}');
     }
   } catch (e) {
-    debugPrint('Exception in fetchAndPrintResponse: $e');
-    throw Exception('Error fetching response: $e');
+    print('Rasa connection error: $e');
+    throw Exception('Failed to connect to Rasa server');
   }
 }
