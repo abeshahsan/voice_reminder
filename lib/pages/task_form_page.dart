@@ -42,6 +42,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text(widget.isEditing ? 'Edit Task' : 'Add New Task'),
         backgroundColor: Colors.blue.shade600,
@@ -59,34 +60,52 @@ class _TaskFormPageState extends State<TaskFormPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Upper half - Task Form
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
-              ),
-              child: _buildTaskForm(),
-            ),
-          ),
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+            final bool keyboardVisible = keyboardHeight > 0;
 
-          // Lower half - Voice Assistant
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              child: VoiceAssistantWidget(
-                title: 'Voice Assistant',
-                subtitle:
-                    'Speak to add tasks or get help while creating this task',
-              ),
-            ),
-          ),
-        ],
+            // When keyboard is visible, prioritize voice assistant
+            // When keyboard is hidden, give more space to the form
+            final formFlex = keyboardVisible ? 2 : 3;
+            final voiceAssistantFlex = keyboardVisible ? 3 : 2;
+
+            return Column(
+              children: [
+                // Upper half - Task Form
+                Expanded(
+                  flex: formFlex,
+                  child: Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      border: Border(
+                        bottom: BorderSide(color: Colors.grey.shade300),
+                      ),
+                    ),
+                    child: _buildTaskForm(),
+                  ),
+                ),
+
+                // Lower half - Voice Assistant
+                Expanded(
+                  flex: voiceAssistantFlex,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+                    child: VoiceAssistantWidget(
+                      title: 'Voice Assistant',
+                      subtitle: keyboardVisible
+                          ? 'Speak to add tasks'
+                          : 'Speak to add tasks or get help while creating this task',
+                      showHeader: !keyboardVisible,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
