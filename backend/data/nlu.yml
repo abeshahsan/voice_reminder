@@ -1,49 +1,126 @@
 version: "3.1"
-
 nlu:
-- intent: add_task
+- intent: greet
   examples: |
-    - Remind me to [submit the report](task) on [Monday at 9 AM](time)
-    - Set a reminder for [project deadline](task) on [10th June at 10 PM](time)
-    - [Attend meeting](task) on [June 12th 3 PM](time)
-    - Remind for [assignment](task) tomorrow at [9 PM](time)
-    - Remind me on [Wednesday 5 PM](time) about [team sync](task)
-    - Add [doctor's appointment](task) for [next Tuesday at 2 PM](time)
-    - Don't let me forget to [call mom](task) at [7 PM tonight](time)
-    - Set reminder: [buy groceries](task) [tonight at 8 PM](time)
-    - Remind me to [take medicine](task) every day at [9 AM](time)
-    - Add task: [water the plants](task) [tomorrow morning](time)
-    - [Submit tax](task) on [April 15 at 10 AM](time)
-    - Remind me about [team presentation](task) on [Friday afternoon](time)
-    - Schedule [gym](task) at [6 PM](time)
-    - Don't forget [visa appointment](task) on [23rd June 10 AM](time)
-    - Remind me about [anniversary](task) on [July 1st](time)
-    - [Send invoice](task) on [Monday 3 PM](time)
-    - Schedule [lunch with Sarah](task) at [1 PM tomorrow](time)
-    - [Dentist appointment](task) next [Thursday at 4 PM](time)
-    - Reminder for [weekly report](task) at [Friday 5 PM](time)
-    - [Check on project status](task) next [Monday morning](time)
-    - Add [client call](task) for [Thursday 11 AM](time)
-    - [Pickup laundry](task) at [6 PM today](time)
-    - Set [exam preparation](task) on [June 8th evening](time)
-    - Remind to [clean room](task) on [Saturday morning](time)
-    - [Team meeting](task) scheduled for [Wednesday 10 AM](time)
-
-- synonym: task
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+    - yo
+    - hello world
+    - hi there
+- intent: goodbye
   examples: |
-    - assignment
-    - meeting
-    - reminder
-    - task
-    - event
-
-- intent: get_tasks
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+    - thanks, goodbye
+- intent: affirm
   examples: |
-    - What do I have on my list?
-    - Show my tasks for [tomorrow](date)
-    - What are my plans for today?
-
-- intent: delete_task
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+    - /affirm
+- intent: deny
   examples: |
-    - Remove [buy milk](task) from the list
-    - Delete the [call mom](task) task
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+- intent: stop
+  examples: |
+    - stop
+    - nevermind
+    - please stop
+    - i want to stop
+    - stop the form
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+- intent: buy_pizza
+  examples: |
+    - i'd like to buy a pizza
+    - i want a pizza
+    - can i buy a pizza
+    - I'm interested in a savory round flattened bread of Italian origin
+    - i want to buy a pizza
+    - I want a pizza
+- intent: inform
+  examples: |
+    - i'd like a [large](pizza_size) pizza
+    - i want to order a [xl](pizza_size) [hawai](pizza_type) pizza
+    - [medium](pizza_size) pizza
+    - [xl](pizza_size)
+    - [small](pizza_size)
+    - [s](pizza_size)
+    - [pepperoni](pizza_type)
+    - give me a [mozerella](pizza_type) pizza
+    - [hawaii](pizza_type) pizza
+    - [smol](pizza_size)
+    - [hawaii](pizza_type)
+    - i want a [large](pizza_size) pizza
+    - [mozzarella](pizza_type)
+    - [hawai](pizza_type)
+    - [veggie](pizza_type)
+    - [fungi](pizza_type)
+    - [vegggie](pizza_type)
+    - [large](pizza_size)
+    - [veggie](pizza_type)
+    - I want a [large](pizza_size) [veggie](pizza_type) pizza

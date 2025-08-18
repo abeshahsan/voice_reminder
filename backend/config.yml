@@ -1,4 +1,3 @@
-recipe: default.v1
 language: en
 
 pipeline:
@@ -6,10 +5,20 @@ pipeline:
 - name: RegexFeaturizer
 - name: LexicalSyntacticFeaturizer
 - name: CountVectorsFeaturizer
+- name: CountVectorsFeaturizer
+  analyzer: char_wb
+  min_ngram: 2
+  max_ngram: 4
 - name: DIETClassifier
   epochs: 100
-- name: EntitySynonymMapper
-- name: DucklingEntityExtractor
-  url: "http://localhost:8000"
-  dimensions: ["time"]
-assistant_id: 20250602-214259-yellow-premise
+  constrain_similarities: true
+  model_confidence: softmax
+
+policies:
+- name: MemoizationPolicy
+- name: TEDPolicy
+  max_history: 5
+  epochs: 50
+  constrain_similarities: true
+- name: RulePolicy
+assistant_id: 20250819-001120-chamfered-birth
