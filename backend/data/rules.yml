@@ -1,41 +1,43 @@
-version: "2.0"
+version: "3.1"
 
 rules:
-    - rule: Say goodbye anytime the user says goodbye
+    - rule: Activate Add Task Form
       steps:
-          - intent: goodbye
-          - action: utter_goodbye
-
-    - rule: Say 'I am a bot' anytime the user challenges
-      steps:
-          - intent: bot_challenge
-          - action: utter_iamabot
-
-    - rule: Activate Pizza Form
-      steps:
-          - intent: buy_pizza
-          - action: simple_pizza_form
-          - active_loop: simple_pizza_form
-
-    - rule: Submit Pizza Form
+          - intent: add_task
+          - action: add_task_form
+          - active_loop: add_task_form
+    - rule: Add Task Imformation
       condition:
-          - active_loop: simple_pizza_form
+          - active_loop: add_task_form
       steps:
-          - action: simple_pizza_form
+          - action: add_task_form
+          - active_loop: add_task_form
+          - slot_was_set:
+                - requested_slot: task_name
+          - slot_was_set:
+                - requested_slot: task_description
+          - slot_was_set:
+                - requested_slot: due_date
+
+    - rule: Submit Add Task Form
+      condition:
+          - active_loop: add_task_form
+      steps:
+          - action: add_task_form
           - active_loop: null
           - slot_was_set:
                 - requested_slot: null
           - action: utter_submit
-          - action: utter_pizza_slots
+          - action: utter_added_task
 
-    - rule: Interruption in Pizza Form
-      condition:
-          # Condition that form is active.
-          - active_loop: simple_pizza_form
-      steps:
-          # This unhappy path handles the case of an intent `bot_challenge`.
-          - intent: bot_challenge
-          - action: utter_iamabot
-          # Return to form after handling the `bot_challenge` intent
-          - action: simple_pizza_form
-          - active_loop: simple_pizza_form
+    # - rule: Interruption in Pizza Form
+    #   condition:
+    #       # Condition that form is active.
+    #       - active_loop: simple_pizza_form
+    #   steps:
+    #       # This unhappy path handles the case of an intent `bot_challenge`.
+    #       - intent: bot_challenge
+    #       - action: utter_iamabot
+    #       # Return to form after handling the `bot_challenge` intent
+    #       - action: simple_pizza_form
+    #       - active_loop: simple_pizza_form

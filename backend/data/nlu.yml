@@ -1,126 +1,68 @@
 version: "3.1"
 nlu:
-- intent: greet
-  examples: |
-    - hey
-    - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
-    - yo
-    - hello world
-    - hi there
-- intent: goodbye
-  examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
-    - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
-    - thanks, goodbye
-- intent: affirm
-  examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
-    - /affirm
-- intent: deny
-  examples: |
-    - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
-- intent: mood_great
-  examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
-- intent: mood_unhappy
-  examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
-- intent: stop
-  examples: |
-    - stop
-    - nevermind
-    - please stop
-    - i want to stop
-    - stop the form
-- intent: bot_challenge
-  examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
-- intent: buy_pizza
-  examples: |
-    - i'd like to buy a pizza
-    - i want a pizza
-    - can i buy a pizza
-    - I'm interested in a savory round flattened bread of Italian origin
-    - i want to buy a pizza
-    - I want a pizza
-- intent: inform
-  examples: |
-    - i'd like a [large](pizza_size) pizza
-    - i want to order a [xl](pizza_size) [hawai](pizza_type) pizza
-    - [medium](pizza_size) pizza
-    - [xl](pizza_size)
-    - [small](pizza_size)
-    - [s](pizza_size)
-    - [pepperoni](pizza_type)
-    - give me a [mozerella](pizza_type) pizza
-    - [hawaii](pizza_type) pizza
-    - [smol](pizza_size)
-    - [hawaii](pizza_type)
-    - i want a [large](pizza_size) pizza
-    - [mozzarella](pizza_type)
-    - [hawai](pizza_type)
-    - [veggie](pizza_type)
-    - [fungi](pizza_type)
-    - [vegggie](pizza_type)
-    - [large](pizza_size)
-    - [veggie](pizza_type)
-    - I want a [large](pizza_size) [veggie](pizza_type) pizza
+    - intent: add_task
+      examples: |
+          - add a task to my todo list
+          - I want to add a task
+          - please add a task
+          - can you add a task for me
+          - I need to add a task
+          - add this task to my todo list
+          - I would like to add a task
+          - I want to add a task to my todo list
+          - can you add this task to my todo list
+          - I have a task to add
+          - I have a new task
+          - I need to add a new task
+          - add a task for me
+          - create a new task
+          - put this on my task list
+          - schedule a task
+          - add something to my tasks
+          - I want to schedule a new task
+          - can you help me add a task
+          - I need to schedule something
+          - add another task for me
+    - intent: inform
+      examples: |
+          - [<I have an assignment due tomorrow/>]   (task_description) 
+          - [<I need to finish my project by next week/>]  (task_description)
+          - [<I want to complete my homework by Friday/>]  (task_description)
+          - [<I have a meeting scheduled for Monday/>]  (task_description)
+          - [<My report is due on Wednesday/>]  (task_description)
+          - [<Please remind me about my doctor appointment on June 5th/>]  (task_description)
+          - [<Set a reminder for call mom on Sunday/>]  (task_description)
+          - [<Submit expenses deadline is next month/>]  (task_description)
+          - [<Team meeting is scheduled for tomorrow/>]  (task_description)
+          - [<I have to renew my license by end of this week/>]  (task_description)
+          - [<There's an assignment I need to finish by tomorrow/>]  (task_description)
+          - [<My project must be done before next week/>]  (task_description)
+          - [<I plan to get my homework done by Friday/>]  (task_description)
+          - [<A meeting is set for Monday/>]  (task_description)
+          - [<The report has a deadline on Wednesday/>]  (task_description)
+          - [<Remind me about my doctor appointment happening June/>]  (task_description)
+          - [<Please set a reminder to call mom this Sunday/>]  (task_description)
+          - [<The deadline for submit expenses is next month/>]  (task_description)
+          - [<We have a team meeting planned for tomorrow/>]  (task_description)
+          - [<I need to renew my license before the end of this week/>]  (task_description)
+
+          - I have an [assignment](task_name) due [tomorrow](due_date)
+          - I need to finish my [project](task_name) by [next week](due_date)
+          - I want to complete my [homework](task_name) by [Friday](due_date)
+          - I have a [meeting](task_name) scheduled for [Monday](due_date)
+          - My [report](task_name) is due on [Wednesday](due_date)
+          - Please remind me about my [doctor appointment](task_name) on [June 5th](due_date)
+          - Set a reminder for [call mom](task_name) on [Sunday](due_date)
+          - [Submit expenses](task_name) deadline is [next month](due_date)
+          - [Team meeting](task_name) is scheduled for [tomorrow](due_date)
+          - I have to [renew my license](task_name) by [end of this week](due_date)
+          - There's an [assignment](task_name) I need to finish by [tomorrow](due_date)
+          - My [project](task_name) must be done before [next week](due_date)
+          - I plan to get my [homework](task_name) done by [Friday](due_date)
+          - A [meeting](task_name) is set for [Monday](due_date)
+          - The [report](task_name) has a deadline on [Wednesday](due_date)
+          - Remind me about my [doctor appointment](task_name) happening [June 5th](due_date)
+          - Please set a reminder to [call mom](task_name) this [Sunday](due_date)
+          - The deadline for [submit expenses](task_name) is [next month](due_date)
+          - We have a [team meeting](task_name) planned for [tomorrow](due_date)
+          - I need to [renew my license](task_name) before [the end of this week](due_date)
